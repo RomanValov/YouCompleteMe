@@ -200,6 +200,7 @@ function! youcompleteme#Enable()
     autocmd BufWritePost,FileWritePost * call s:OnFileSave()
     autocmd FileType * call s:OnFileTypeSet()
     autocmd BufEnter,CmdwinEnter,WinEnter * call s:OnBufferEnter()
+    autocmd VimResume,ShellCmdPost,FocusGained * call s:OnVimResume()
     autocmd BufUnload * call s:OnBufferUnload()
     autocmd InsertLeave * call s:OnInsertLeave()
     autocmd VimLeave * call s:OnVimLeave()
@@ -796,6 +797,15 @@ function! s:OnBufferEnter()
   py3 ycm_state.OnBufferVisit()
   " Last parse may be outdated because of changes from other buffers. Force a
   " new parse.
+  call s:OnFileReadyToParse( 1 )
+endfunction
+
+
+function! s:OnVimResume()
+  if !s:AllowedToCompleteInCurrentBuffer()
+    return
+  endif
+
   call s:OnFileReadyToParse( 1 )
 endfunction
 
